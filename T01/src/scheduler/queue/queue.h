@@ -1,11 +1,13 @@
 // Esta linea sirve para que el código de este archivo solo se importe una vez
+#include "../process/process.h"
 #pragma once
+
 
 
 /** Estructura de una Queue */
 struct Queue_list
 {
-  unsigned int* array;
+  struct Process* array;
   unsigned int count;
   unsigned int size;
 };
@@ -26,10 +28,10 @@ typedef struct Queue_list Queue;
 Queue* Queue_init();
 
 /** Inserta un elemento al final de la Queue */
-void Queue_append(Queue* list, unsigned int element);
+void Queue_append(Queue* list, Process* element);
 
 /** Inserta el elemento dado en la posicion indicada */
-void Queue_insert(Queue* list, unsigned int element, unsigned int position);
+void Queue_insert(Queue* list, Process* element, unsigned int position);
 
 /** Elimina el elemento de la posicion indicada y lo retorna */
 unsigned int Queue_delete(Queue* list, unsigned int position);

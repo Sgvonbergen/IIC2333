@@ -1,4 +1,6 @@
+//Estructura de process
 #pragma once
+
 
 struct process
 {

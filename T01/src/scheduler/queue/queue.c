@@ -1,5 +1,7 @@
 // Importo el archivo Queue.h
 #include "queue.h"
+#include "../process/process.h"
+
 // Libreria estandar de C
 #include <stdlib.h>
 
@@ -12,13 +14,13 @@ int arraySize = 8;
 void upgradeSize(Queue* list)
 {
   list->size *= 2;
-  list->array = realloc(list->array, sizeof(int) * list->size);
+  list->array = realloc(list->array, sizeof(struct Process*) * list->size);
 }
 
-void insertElement(Queue* list, int position, int element)
+void insertElement(Queue* list, int position, Process* element)
 {
   for (size_t i = list->count-1; i >= position; i--) {
-    int temp = list->array[i];
+    Process* temp = list->array[i];
     list->array[i+1] = temp;
   }
   list->array[position] = element;
@@ -28,14 +30,14 @@ void insertElement(Queue* list, int position, int element)
 Queue* Queue_init()
 {
   Queue* list = malloc(sizeof(Queue));
-  list->array = malloc(sizeof(int) * arraySize);
+  list->array = malloc(sizeof(struct Process) * arraySize);
   list->size = arraySize;
   list->count = 0;
   return list;
 }
 
 /** Inserta un elemento al final de la Queue */
-void Queue_append(Queue* list, unsigned int element)
+void Queue_append(Queue* list, Process* element)
 {
   if (list->count>=list->size) {
     upgradeSize(list);
@@ -45,7 +47,7 @@ void Queue_append(Queue* list, unsigned int element)
 }
 
 /** Inserta el elemento dado en la posicion indicada */
-void Queue_insert(Queue* list, unsigned int element, unsigned int position)
+void Queue_insert(Queue* list, Process* element, unsigned int position)
 {
   if (list->count>=list->size) {
     upgradeSize(list);
@@ -62,7 +64,7 @@ unsigned int Queue_pop(Queue* list)
 /** Elimina el elemento de la posicion indicada y lo retorna */
 unsigned int Queue_delete(Queue* list, unsigned int position)
 {
-  int element = list->array[position];
+  Process *element = list->array[position];
   for (size_t i = position; i < list->count; i++) {
     list->array[i] = list->array[i+1];
   }
