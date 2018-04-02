@@ -14,7 +14,7 @@ int arraySize = 8;
 void upgradeSize(Queue* list)
 {
   list->size *= 2;
-  list->array = realloc(list->array, sizeof(struct Process*) * list->size);
+  list->array = realloc(list->array, sizeof(Process*) * list->size);
 }
 
 void insertElement(Queue* list, int position, Process* element)
@@ -30,7 +30,7 @@ void insertElement(Queue* list, int position, Process* element)
 Queue* Queue_init()
 {
   Queue* list = malloc(sizeof(Queue));
-  list->array = malloc(sizeof(struct Process) * arraySize);
+  list->array = malloc(sizeof(Process) * arraySize);
   list->size = arraySize;
   list->count = 0;
   return list;

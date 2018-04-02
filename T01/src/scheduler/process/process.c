@@ -17,7 +17,7 @@ Process* Process_init(uint PID, char* name, uint burstAmount, uint* bursts, uint
   p->burstLeft = bursts[0];
   p->readyTime = 0;
   p->currentBurst = 0;
-  return;
+  return p;
 }
 
 void Process_tick(Process* p)
