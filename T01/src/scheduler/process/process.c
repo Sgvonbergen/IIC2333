@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-process_asd* process_init(uint PID, char* name, uint burstAmount, uint* bursts, uint start)
+process* process_init(uint PID, char* name, uint burstAmount, uint* bursts, uint start)
 {
-  process_asd* p = malloc(sizeof(process_asd));
+  process* p = malloc(sizeof(process));
   p->PID = PID;
   p->start = start;
   p->state = "READY";
@@ -20,7 +20,7 @@ process_asd* process_init(uint PID, char* name, uint burstAmount, uint* bursts, 
   return p;
 }
 
-void process_tick(process_asd* p)
+void process_tick(process* p)
 {
   if (strcmp(p->state, "READY") == 0) {
     p->readyTime++;
@@ -30,7 +30,7 @@ void process_tick(process_asd* p)
   }
 }
 
-void process_int(process_asd* p)
+void process_int(process* p)
 {
   if (p->burstLeft == 0) {
     if (p->currentBurst == (p->burstAmount - 1)) {

@@ -14,13 +14,13 @@ int arraySize = 8;
 void upgradeSize(Queue* list)
 {
   list->size *= 2;
-  list->array = realloc(list->array, sizeof(process_asd) * list->size);
+  list->array = realloc(list->array, sizeof(process) * list->size);
 }
 
-void insertElement(Queue* list, int position, process_asd* element)
+void insertElement(Queue* list, int position, process* element)
 {
   for (size_t i = list->count-1; i >= position; i--) {
-    process_asd* temp = list->array[i];
+    process* temp = list->array[i];
     list->array[i+1] = temp;
   }
   list->array[position] = element;
@@ -30,14 +30,14 @@ void insertElement(Queue* list, int position, process_asd* element)
 Queue* Queue_init()
 {
   Queue* list = malloc(sizeof(Queue));
-  list->array = malloc(sizeof(process_asd) * arraySize);
+  list->array = malloc(sizeof(process) * arraySize);
   list->size = arraySize;
   list->count = 0;
   return list;
 }
 
 /** Inserta un elemento al final de la Queue */
-void Queue_append(Queue* list, process_asd* element)
+void Queue_append(Queue* list, process* element)
 {
   if (list->count>=list->size) {
     upgradeSize(list);
@@ -47,7 +47,7 @@ void Queue_append(Queue* list, process_asd* element)
 }
 
 /** Inserta el elemento dado en la posicion indicada */
-void Queue_insert(Queue* list, process_asd* element, unsigned int position)
+void Queue_insert(Queue* list, process* element, unsigned int position)
 {
   if (list->count>=list->size) {
     upgradeSize(list);
@@ -56,15 +56,15 @@ void Queue_insert(Queue* list, process_asd* element, unsigned int position)
   list->count += 1;
 }
 
-process_asd* Queue_pop(Queue* list)
+process* Queue_pop(Queue* list)
 {
   return Queue_delete(list, 0);
 }
 
 /** Elimina el elemento de la posicion indicada y lo retorna */
-process_asd* Queue_delete(Queue* list, unsigned int position)
+process* Queue_delete(Queue* list, unsigned int position)
 {
-  process_asd *element = list->array[position];
+  process *element = list->array[position];
   for (size_t i = position; i < list->count; i++) {
     list->array[i] = list->array[i+1];
   }
@@ -73,7 +73,7 @@ process_asd* Queue_delete(Queue* list, unsigned int position)
 }
 
 /** Retorna el valor del elemento en la posicion dada */
-process_asd* Queue_get(Queue* list, unsigned int position)
+process* Queue_get(Queue* list, unsigned int position)
 {
   return list->array[position];
 }

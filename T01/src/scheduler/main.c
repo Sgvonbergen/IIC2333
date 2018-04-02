@@ -16,11 +16,11 @@ int main(int argc, char* argv[])
       uint numeros[100];
       uint *bursts = numeros;
       bursts[0] = 1;
-      process_asd *p1 = process_init(1, "asd", 100, bursts, 10);
+      process *p1 = process_init(1, "asd", 100, bursts, 10);
 
       Queue *q1 = Queue_init();
       Queue_append(q1, p1);
-      process_asd *p11 = Queue_get(q1, 0);
+      process *p11 = Queue_get(q1, 0);
       uint *b = p11-> bursts;
       printf("%d \n", b[0] );
 
