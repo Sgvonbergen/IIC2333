@@ -15,10 +15,14 @@ int main(int argc, char* argv[])
     if (strcmp(argv[1], "v1") == 0) {
       uint numeros[100];
       uint *bursts = numeros;
-      Process *p1 = Process_init(1, "asd", 100, bursts, 10);
+      bursts[0] = 1;
+      process_asd *p1 = process_init(1, "asd", 100, bursts, 10);
 
       Queue *q1 = Queue_init();
       Queue_append(q1, p1);
+      process_asd *p11 = Queue_get(q1, 0);
+      uint *b = p11-> bursts;
+      printf("%d \n", b[0] );
 
 
     }

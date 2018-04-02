@@ -17,11 +17,11 @@ struct process
   unsigned int burstLeft;
 };
 
-typedef struct process Process;
+typedef struct process process_asd;
 typedef unsigned int uint;
 
-Process* Process_init(uint PID, char* name, uint burstAmount, uint* bursts, uint start);
+process_asd* process_init(uint PID, char* name, uint burstAmount, uint* bursts, uint start);
 
-void Process_tick(Process* p);
+void process_tick(process_asd* p);
 
-void Process_int(Process* p);
+void process_int(process_asd* p);

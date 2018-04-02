@@ -7,7 +7,7 @@
 /** Estructura de una Queue */
 struct Queue_list
 {
-  struct Process* array;
+  process_asd** array;
   unsigned int count;
   unsigned int size;
 };
@@ -28,19 +28,19 @@ typedef struct Queue_list Queue;
 Queue* Queue_init();
 
 /** Inserta un elemento al final de la Queue */
-void Queue_append(Queue* list, Process* element);
+void Queue_append(Queue* list, process_asd* element);
 
 /** Inserta el elemento dado en la posicion indicada */
-void Queue_insert(Queue* list, Process* element, unsigned int position);
+void Queue_insert(Queue* list, process_asd* element, unsigned int position);
 
 /** Elimina el elemento de la posicion indicada y lo retorna */
-unsigned int Queue_delete(Queue* list, unsigned int position);
+process_asd* Queue_delete(Queue* list, unsigned int position);
 
 /** Elminia el primer elemento y lo retorna */
-unsigned int Queue_pop(Queue* list);
+process_asd* Queue_pop(Queue* list);
 
 /** Retorna el valor del elemento en la posicion dada */
-unsigned int Queue_get(Queue* list, unsigned int position);
+process_asd* Queue_get(Queue* list, unsigned int position);
 
 /** Concatena la segunda Queue a la primera Queue */
 void Queue_concatenate(Queue* list1, Queue* list2);
