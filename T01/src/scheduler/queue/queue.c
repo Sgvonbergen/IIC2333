@@ -78,6 +78,18 @@ process* Queue_get(Queue* list, unsigned int position)
   return list->array[position];
 }
 
+process* Queue_get_process_by_start_time(Queue* list, unsigned int start_time)
+{
+  process* p;
+  for (size_t i = 0; i < list->count; i++) {
+    p = list->array[i];
+    if (p->start == start_time) {
+      return p;
+    }
+  }
+  return NULL;
+}
+
 /** Concatena la segunda Queue a la primera Queue. No destruye la segunda Queue */
 void Queue_concatenate(Queue* list1, Queue* list2)
 {
