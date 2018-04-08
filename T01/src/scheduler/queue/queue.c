@@ -30,7 +30,7 @@ void insertElement(Queue* list, int position, process* element)
 Queue* Queue_init()
 {
   Queue* list = malloc(sizeof(Queue));
-  list->array = malloc(sizeof(process) * arraySize);
+  list->array = malloc(sizeof(int) * arraySize);
   list->size = arraySize;
   list->count = 0;
   return list;

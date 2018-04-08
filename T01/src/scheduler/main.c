@@ -8,10 +8,32 @@
 #include "process/process.h"
 #include "mlqf/mlqf.h"
 
+Queue* fileReader(char* filename) {
+  /* File reading */
+  FILE* input;
+  Queue* processes = Queue_init();
+  char line[1024], *linePTR;
+  input = fopen(filename, "r");
+  char* name;
+  // Error opening the file
+  int i = 0;
+  while (fgets(line, 512, input) != NULL) {
+    linePTR = line;
+    name = strsep(&linePTR, " ");
+    uint t_init = atoi(strsep(&linePTR, " "));
+    uint burst_amount = atoi(strsep(&linePTR, " "));
+    uint* bursts = malloc(sizeof(int)*burst_amount);
+    for (size_t i = 0; i < burst_amount; i++) {
+      bursts[i] = atoi(strsep(&linePTR, " "));
+    }
+    Queue_append(processes, process_init(i, name, burst_amount, bursts, t_init));
+  }
+  return processes;
+}
+
 
 int main(int argc, char* argv[])
 {
-  // if version parameter exists
   if (argc >= 2) {
     if (strcmp(argv[1], "v1") == 0) {
       uint numeros[100];
