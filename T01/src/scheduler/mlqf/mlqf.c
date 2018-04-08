@@ -12,18 +12,17 @@ mlqf* mlqf_init(unsigned int Q, unsigned int quantum)
   m-> Q = Q;
   m-> quantum = quantum;
   m-> queues = malloc(sizeof(Queue)*Q);
-
+  //la lista de mayor prioridad estara en el espacio 0 el de menor prioridad en el espacio Q
   for (int i = 0; i < Q; i++){
     Queue* q = Queue_init();
     m->queues[i] = q;
   }
-
   return m;
 }
 
 void mlqf_add_process(mlqf* m, process* p)
   {
-    Queue* q1 = m->queues[0];
+    Queue* q1 = m->queues[0]; //agrego el elemento a la lista de mayor priodad
     Queue_append(q1, p);
   }
 
@@ -33,6 +32,8 @@ void mlqf_tick(mlqf* m)
    mlqf_update_processes(m);
 
    // luego revisamos que sudece con el proceso que se esta corriendo en la cpu
+   //TODO manejar el caso en que no exista ningun proceso corriendo (al comienzo y en algun momento dentro de la ejecucion)
+
    process* rp = m-> running_process;
    void process_tick(rp);
    int keep =  process_check(rp);
@@ -66,7 +67,7 @@ void mlqf_tick(mlqf* m)
 
  }
 
-
+// retorna el primer elemento que vea en la lista de mas alta prioridad
 process* mlqf_get_next_process(mlqf* m){
   for(int i = 0; i < m->Q ; i++ ){
     if (Queue_isempty(m->queues[i])) {

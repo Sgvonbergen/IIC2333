@@ -30,10 +30,14 @@ void process_tick(process* p)
   }
   if (strcmp(p->state, "RUNNING") == 0) {
     p->burstLeft--;
+    /* responsetime es el tiempo de ejecucion + tiempo de esperea. aqui sumo el tiempo de ejecucion
+    y luego  cuando termina le agrego el tiempo que espero (readiTime)*/
     p->responsetime++;
   }
 }
 
+
+// retorno 0 si termino el burst actual y no quedan burst. si quedan burst retorno 1, si no ha terminado retorno 2
 int process_check(process* p)
 {
   if (p->burstLeft == 0) {
@@ -53,6 +57,7 @@ int process_check(process* p)
   }
   }
 
+// retorna el tiempo que lleva corriendo en el burst actual
 int process_time_running(process* p)
 {
   int t = p->bursts[p->currentBurst] - p->burstLeft;
