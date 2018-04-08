@@ -47,3 +47,6 @@ void Queue_concatenate(Queue* list1, Queue* list2);
 
 /** Libera todos los recursos asociados a la lista */
 void Queue_destroy(Queue* list);
+
+/** Retorna verdadero (1) si la lista esta vacia y falso (0) si no. */
+int Queue_isempty(Queue* list);
