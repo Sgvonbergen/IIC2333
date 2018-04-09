@@ -2,11 +2,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-// Structures for managing processes and priority queues.
+#include <signal.h>
 
+// Structures for managing processes and priority queues.
 #include "queue/queue.h"
 #include "process/process.h"
+// Scheduler
 #include "mlqf/mlqf.h"
+
+// Global variables
+mlqf* scheduler;
+int t;
+
+void signal_handler(int sig){
+  if (sig == SIGINT){
+    mlqf_get_stats(scheduler, t);
+    mlqf_terminate(scheduler);
+    exit(0);
+  }
+}
 
 Queue* fileReader(char* filename) {
   /* File reading */
@@ -35,6 +49,7 @@ Queue* fileReader(char* filename) {
 
 int main(int argc, char* argv[])
 {
+  signal(SIGINT,signal_handler);
   if (argc >= 2) {
     if (strcmp(argv[1], "v1") == 0) {
 
@@ -60,8 +75,8 @@ int main(int argc, char* argv[])
       Queue_append(processes, p3);
       */
 
-      mlqf* scheduler = mlqf_init(2, 2, 1);
-      int t = 1;
+      scheduler = mlqf_init(2, 2, 1);
+      t = 1;
       int busy = 0;
       while(Queue_isempty(processes)==0 || busy ==1 ){
         process* p = Queue_get_process_by_start_time(processes, t-1);

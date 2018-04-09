@@ -25,3 +25,5 @@ void mlqf_update_processes(mlqf* m);
 void mlqf_get_stats(mlqf* m, int t);
 
 process* mlqf_get_next_process(mlqf* m);
+
+void mlqf_terminate(mlqf* m);

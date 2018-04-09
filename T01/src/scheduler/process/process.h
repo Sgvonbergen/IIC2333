@@ -36,3 +36,5 @@ int process_check(process* p);
 int process_time_running(process* p);
 
 void process_start(process* p);
+
+void process_destroy(process* p);

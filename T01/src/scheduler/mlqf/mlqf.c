@@ -4,6 +4,7 @@
 
 // Libreria estandar de C
 #include <stdlib.h>
+#include <stdio.h>
 
 
 mlqf* mlqf_init(unsigned int Q, unsigned int quantum, unsigned int version)
@@ -152,4 +153,20 @@ void mlqf_get_stats(mlqf* m, int t){
        process_print(p);
      }
    }
+ }
+
+ void mlql_terminate(mlqf* m)
+ {
+   Queue* q;
+   process* p;
+   for (size_t i = 0; i < m->Q; i++) {
+     q = m->queues[i];
+     for (size_t j = 0; j < q->count; j++) {
+       p = q->array[j];
+       process_destroy(p);
+     }
+     Queue_destroy(q);
+   }
+   free(m->queues);
+   free(m);
  }
