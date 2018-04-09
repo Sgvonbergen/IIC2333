@@ -85,10 +85,10 @@ void process_print(process* p)
 {
   printf("%s:\n", p->name);
   printf("Turnos de CPU: %d\n", p->cputimes );
-  printf("Bloqueos %d\n", p->bloqueos);
+  printf("Bloqueos: %d\n", p->bloqueos);
   printf("Turnaround time: %d\n", p->turnarountime);
   printf("Response time: %d\n", p->responsetime );
-  printf("Waiting time %d\n", p->readyTime);
+  printf("Waiting time: %d\n", p->readyTime);
 }
 
 void process_destroy(process* p)
