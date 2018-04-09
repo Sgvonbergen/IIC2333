@@ -75,6 +75,19 @@ int main(int argc, char* argv[])
       Queue_append(processes, p3);
       */
 
+      int quantum = atoi(argv[3]);
+      int Q = atoi(argv[4]);
+
+      int version;
+      if (strcmp(argv[1], "v1")) {
+        version = 1;
+      } else if (strcmp(argv[1], "v12")) {
+        version = 2;
+        int s = atoi(argv[5]);
+      } else if(strcmp(argv[1], "v3")){
+        int s = atoi(argv[5]);
+      }
+
       scheduler = mlqf_init(2, 2, 1);
       t = 1;
       int busy = 0;
