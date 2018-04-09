@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 
-mlqf* mlqf_init(unsigned int Q, unsigned int quantum)
+mlqf* mlqf_init(unsigned int Q, unsigned int quantum, unsigned int version)
 {
   mlqf* m = malloc(sizeof(mlqf));
   m-> Q = Q;
@@ -16,6 +16,11 @@ mlqf* mlqf_init(unsigned int Q, unsigned int quantum)
   //la lista de mayor prioridad estara en el espacio 0 el de menor prioridad en el espacio Q
   for (int i = 0; i < Q; i++){
     Queue* q = Queue_init();
+    if (version == 2){  //si es la version 2 le asigno el quantum a cada cola
+        unsigned int qi;
+        qi = (i+1)*m->quantum;
+        Queue_set_quantum(q, qi);
+    }
     m->queues[i] = q;
   }
   m->running_process = NULL;
@@ -29,7 +34,7 @@ void mlqf_add_process(mlqf* m, process* p)
     printf("el proceso %s ha entrado al scheduler \n", p->name);
   }
 
-void mlqf_tick(mlqf* m)
+int mlqf_tick(mlqf* m)
  {
    // primero revisamos se esta corriendo un proceso en la cpu
 
@@ -54,12 +59,14 @@ void mlqf_tick(mlqf* m)
      rp->state = "FINISHED";
      printf("proceso %s ha terminado todos sus bursts\n", rp->name);
      Queue_append(m->finished_processes, rp);
-     m->running_process = mlqf_get_next_process(m);
+     m->running_process = NULL;
+     /*
      if (m->running_process == NULL){
        printf("el scheduller se ha quedado vacio\n");
        return 0;
      }
-     process_start(m->running_process);
+    process_start(m->running_process);
+    */
    }
    // si keep es 1 significa que el  burst esta terminado y aun le quedan bursts
    if (keep == 1){
@@ -67,8 +74,9 @@ void mlqf_tick(mlqf* m)
      Queue* previus_queue = m->queues[rp->corresponding_queue];
      Queue_append(previus_queue, rp);
      printf("proceso %s ha terminado uno de sus bursts\n", rp->name );
-     m->running_process = mlqf_get_next_process(m);
-     process_start(m->running_process);
+     m->running_process = NULL;
+     /*m->running_process = mlqf_get_next_process(m);
+     process_start(m->running_process);*/
    }
    // si keep es 2 significa que el burst todavia no a terminado
    if (keep == 2){
@@ -80,8 +88,9 @@ void mlqf_tick(mlqf* m)
        Queue* next_queue = m->queues[rp->corresponding_queue];
        Queue_append(next_queue, rp);
        printf("proceso %s ha terminado su quantum \n", rp->name);
-       m->running_process = mlqf_get_next_process(m);
-       process_start(m->running_process);
+       m->running_process = NULL;
+       /*m->running_process = mlqf_get_next_process(m);
+       process_start(m->running_process);*/
 
      }
    }

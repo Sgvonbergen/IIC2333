@@ -7,15 +7,16 @@ struct mlqf
   Queue** queues;
   unsigned int Q;
   unsigned int quantum;
+  unsigned int version;
   process* running_process;
   Queue* finished_processes;
 };
 
 typedef struct mlqf mlqf;
 
-mlqf* mlqf_init(unsigned int Q, unsigned int quantum);
+mlqf* mlqf_init(unsigned int Q, unsigned int quantum, unsigned int version);
 
-void mlqf_tick(mlqf* m);
+int mlqf_tick(mlqf* m);
 
 void mlqf_add_process(mlqf* m, process* p);
 

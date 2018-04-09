@@ -10,6 +10,7 @@ struct Queue_list
   process** array;
   unsigned int count;
   unsigned int size;
+  unsigned int q;
 };
 
 // Aquí le estoy poniendo un nombre más simple a la lista para no tener que
@@ -53,3 +54,5 @@ void Queue_destroy(Queue* list);
 
 /** Retorna verdadero (1) si la lista esta vacia y falso (0) si no. */
 int Queue_isempty(Queue* list);
+
+void Queue_set_quantum(Queue* list, unsigned int q);

@@ -36,6 +36,11 @@ Queue* Queue_init()
   return list;
 }
 
+void Queue_set_quantum(Queue* list, unsigned int q)
+{
+  list->q = q;
+}
+
 /** Inserta un elemento al final de la Queue */
 void Queue_append(Queue* list, process* element)
 {
@@ -84,6 +89,7 @@ process* Queue_get_process_by_start_time(Queue* list, unsigned int start_time)
   for (size_t i = 0; i < list->count; i++) {
     p = list->array[i];
     if (p->start == start_time) {
+      Queue_delete(list, i);
       return p;
     }
   }
