@@ -155,7 +155,7 @@ void mlqf_get_stats(mlqf* m, int t){
    }
  }
 
- void mlql_terminate(mlqf* m)
+ void mlqf_terminate(mlqf* m)
  {
    Queue* q;
    process* p;
