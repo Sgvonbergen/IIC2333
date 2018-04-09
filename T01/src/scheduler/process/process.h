@@ -25,7 +25,7 @@ struct process
 typedef struct process process;
 typedef unsigned int uint;
 
-process* process_init(uint PID, char* name, uint burstAmount, uint* bursts, uint start);
+process* process_init(uint PID, char** name, uint burstAmount, uint* bursts, uint start);
 
 void process_tick(process* p);
 

@@ -26,8 +26,9 @@ Queue* fileReader(char* filename) {
     for (size_t i = 0; i < burst_amount; i++) {
       bursts[i] = atoi(strsep(&linePTR, " "));
     }
-    Queue_append(processes, process_init(i, name, burst_amount, bursts, t_init));
+    Queue_append(processes, process_init(i, &name, burst_amount, bursts, t_init));
   }
+  fclose(input);
   return processes;
 }
 

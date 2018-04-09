@@ -3,13 +3,14 @@
 #include <string.h>
 #include <stdio.h>
 
-process* process_init(uint PID, char* name, uint burstAmount, uint* bursts, uint start)
+process* process_init(uint PID, char** name, uint burstAmount, uint* bursts, uint start)
 {
   process* p = malloc(sizeof(process));
   p->PID = PID;
   p->start = start;
   p->state = "READY";
-  p->name = name;
+  p->name = malloc(sizeof(char)*256);
+  strcpy(p->name, *name);
   p->burstAmount = burstAmount;
   p->bursts = malloc(sizeof(uint)*burstAmount);
   for (size_t i = 0; i < burstAmount; i++) {
