@@ -72,7 +72,8 @@ int main(int argc, char* argv[])
     t = 1;
     int busy = 0;
     while(Queue_isempty(processes)==0 || busy ==1 ){
-      process* p = Queue_get_process_by_start_time(processes, t-1);
+      printf("%i\n", t);
+      process* p = Queue_get_process_by_start_time(processes, t);
       if (p != NULL){
         mlqf_add_process(scheduler, p);
       }
@@ -86,8 +87,11 @@ int main(int argc, char* argv[])
       }
       t++;
     }
+    t--;
     mlqf_get_stats(scheduler, t);
     mlqf_terminate(scheduler);
+  } else {
+    return 1;
   }
   return 0;
 }

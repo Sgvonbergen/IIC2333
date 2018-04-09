@@ -38,7 +38,7 @@ void mlqf_add_process(mlqf* m, process* p)
 int mlqf_tick(mlqf* m)
  {
    // primero revisamos se esta corriendo un proceso en la cpu
-
+   int time_runnig;
    process* rp = m-> running_process;
    if (rp == NULL){
      m->running_process = mlqf_get_next_process(m);
@@ -81,8 +81,7 @@ int mlqf_tick(mlqf* m)
    }
    // si keep es 2 significa que el burst todavia no a terminado
    if (keep == 2){
-     int  time_runnig =  process_time_running(rp);
-
+     time_runnig =  process_time_running(rp);
      if (m->version == 3){ //para el caso de la version 2 seteo el quantum de la cola correspondiente
        Queue* q = m->queues[rp->corresponding_queue];
        m->quantum = q->q;
@@ -90,6 +89,7 @@ int mlqf_tick(mlqf* m)
 
      if (time_runnig >= m->quantum){
        rp->state = "READY";
+       rp->time_running = 0;
        rp->bloqueos ++;
        if (rp->corresponding_queue + 1 < m->Q){rp->corresponding_queue++;}; // supuesto: si me paso del quantum y estoy en el final de la cola, me quedo en la ultima cola
        Queue* next_queue = m->queues[rp->corresponding_queue];

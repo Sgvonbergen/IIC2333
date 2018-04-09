@@ -20,6 +20,7 @@ struct process
   unsigned int burstLeft;
   unsigned int corresponding_queue;
   unsigned int cputimes;
+  unsigned int time_running;
 };
 
 typedef struct process process;

@@ -24,6 +24,7 @@ process* process_init(uint PID, char** name, uint burstAmount, uint* bursts, uin
   p->responsetime = -1;
   p->currentBurst = 0;
   p->corresponding_queue = 0;
+  p->time_running = 0;
   return p;
 }
 
@@ -37,6 +38,7 @@ void process_tick(process* p)
     /* turnarountime es el tiempo de ejecucion + tiempo de esperea. aqui sumo el tiempo de ejecucion
     y luego  cuando termina le agrego el tiempo que espero (readiTime)*/
     p->turnarountime++;
+    p->time_running++;
   }
 }
 
@@ -49,6 +51,7 @@ int process_check(process* p)
   printf("burstAmount: %d\n", p->burstAmount -1 );
   printf("burst left: %d\n", p->burstLeft );
   if (p->burstLeft == 0) {
+    p->time_running = 0;
     if (p->currentBurst == (p->burstAmount - 1)) {
       p->state = "FINISHED";
       p->turnarountime+= p->readyTime;
@@ -69,8 +72,7 @@ int process_check(process* p)
 // retorna el tiempo que lleva corriendo en el burst actual
 int process_time_running(process* p)
 {
-  int t = p->bursts[p->currentBurst] - p->burstLeft;
-  return t;
+  return p->time_running;
 }
 
 void process_start(process* p)
