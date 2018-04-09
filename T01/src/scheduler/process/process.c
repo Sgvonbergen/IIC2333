@@ -1,6 +1,7 @@
 #include "process.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 process* process_init(uint PID, char* name, uint burstAmount, uint* bursts, uint start)
 {
@@ -15,9 +16,11 @@ process* process_init(uint PID, char* name, uint burstAmount, uint* bursts, uint
     p->bursts[i] = bursts[i];
   }
   p->burstLeft = bursts[0];
+  p->cputimes = 0;
   p->readyTime = 0;
-  p->turnarountime = -1;
-  p->responsetime = 0;
+  p->turnarountime = 0;
+  p->bloqueos = 0;
+  p->responsetime = -1;
   p->currentBurst = 0;
   p->corresponding_queue = 0;
   return p;
@@ -30,9 +33,9 @@ void process_tick(process* p)
   }
   if (strcmp(p->state, "RUNNING") == 0) {
     p->burstLeft--;
-    /* responsetime es el tiempo de ejecucion + tiempo de esperea. aqui sumo el tiempo de ejecucion
+    /* turnarountime es el tiempo de ejecucion + tiempo de esperea. aqui sumo el tiempo de ejecucion
     y luego  cuando termina le agrego el tiempo que espero (readiTime)*/
-    p->responsetime++;
+    p->turnarountime++;
   }
 }
 
@@ -40,10 +43,15 @@ void process_tick(process* p)
 // retorno 0 si termino el burst actual y no quedan burst. si quedan burst retorno 1, si no ha terminado retorno 2
 int process_check(process* p)
 {
+  printf("check of process '%s' \n", p->name );
+  printf("currentBurst: %d\n", p->currentBurst);
+  printf("burstAmount: %d\n", p->burstAmount -1 );
+  printf("burst left: %d\n", p->burstLeft );
   if (p->burstLeft == 0) {
     if (p->currentBurst == (p->burstAmount - 1)) {
       p->state = "FINISHED";
-      p->responsetime += p->readyTime;
+      p->turnarountime+= p->readyTime;
+      printf("el proceso '%s' ha finalizado \n", p->name);
       return 0;
     } else {
       p->state = "READY";
@@ -66,8 +74,17 @@ int process_time_running(process* p)
 
 void process_start(process* p)
 {
-  p->state = "RUNING";
+  p->state = "RUNNING";
   if (p->responsetime < 0){
     p->responsetime = p->readyTime;
   }
+}
+
+void process_print(process* p){
+  printf("%s:\n", p->name);
+  printf("Turnos de CPU: %d\n", p->cputimes );
+  printf("Bloqueos %d\n", p->bloqueos);
+  printf("Turnaround time: %d\n", p->turnarountime);
+  printf("Response time: %d\n", p->responsetime );
+  printf("Waiting time %d\n", p->readyTime);
 }
