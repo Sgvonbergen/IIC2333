@@ -30,7 +30,7 @@ void insertElement(Queue* list, int position, process* element)
 Queue* Queue_init()
 {
   Queue* list = malloc(sizeof(Queue));
-  list->array = malloc(sizeof(process) * arraySize);
+  list->array = malloc(sizeof(int) * arraySize);
   list->size = arraySize;
   list->count = 0;
   return list;
@@ -76,6 +76,18 @@ process* Queue_delete(Queue* list, unsigned int position)
 process* Queue_get(Queue* list, unsigned int position)
 {
   return list->array[position];
+}
+
+process* Queue_get_process_by_start_time(Queue* list, unsigned int start_time)
+{
+  process* p;
+  for (size_t i = 0; i < list->count; i++) {
+    p = list->array[i];
+    if (p->start == start_time) {
+      return p;
+    }
+  }
+  return NULL;
 }
 
 /** Concatena la segunda Queue a la primera Queue. No destruye la segunda Queue */

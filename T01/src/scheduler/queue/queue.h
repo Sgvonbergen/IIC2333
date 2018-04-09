@@ -42,6 +42,9 @@ process* Queue_pop(Queue* list);
 /** Retorna el valor del elemento en la posicion dada */
 process* Queue_get(Queue* list, unsigned int position);
 
+/** Retorna el proceso que parte en start_time. Retorna NULL si no existe ninguno **/
+process* Queue_get_process_by_start_time(Queue* list, unsigned int start_time);
+
 /** Concatena la segunda Queue a la primera Queue */
 void Queue_concatenate(Queue* list1, Queue* list2);
 
