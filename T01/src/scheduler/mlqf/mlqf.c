@@ -16,7 +16,7 @@ mlqf* mlqf_init(unsigned int Q, unsigned int quantum, unsigned int version)
   //la lista de mayor prioridad estara en el espacio 0 el de menor prioridad en el espacio Q
   for (int i = 0; i < Q; i++){
     Queue* q = Queue_init();
-    if (version == 2){  //si es la version 2 le asigno el quantum a cada cola
+    if (version == 3){  //si es la version 2 le asigno el quantum a cada cola
         unsigned int qi;
         qi = (i+1)*m->quantum;
         Queue_set_quantum(q, qi);
@@ -81,6 +81,12 @@ int mlqf_tick(mlqf* m)
    // si keep es 2 significa que el burst todavia no a terminado
    if (keep == 2){
      int  time_runnig =  process_time_running(rp);
+
+     if (m->version == 3){ //para el caso de la version 2 seteo el quantum de la cola correspondiente
+       Queue* q = m->queues[rp->corresponding_queue];
+       m->quantum = q->q;
+     }
+
      if (time_runnig >= m->quantum){
        rp->state = "READY";
        rp->bloqueos ++;

@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
       Queue_append(processes, p3);
       */
 
-      mlqf* scheduler = mlqf_init(2, 2);
+      mlqf* scheduler = mlqf_init(2, 2, 1);
       int t = 1;
       int busy = 0;
       while(Queue_isempty(processes)==0 || busy ==1 ){
