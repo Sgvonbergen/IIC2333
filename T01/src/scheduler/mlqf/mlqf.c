@@ -155,6 +155,17 @@ void mlqf_get_stats(mlqf* m, int t){
    }
  }
 
+ void mlqf_resetqueues(mlqf* m){
+    printf("se han reiniciado las prioridades\n" );
+    for(int i=1; i<m->Q; i++){
+      Queue* q = m->queues[i];
+      for(int j=0; j< q->count; j++){
+         process* p = Queue_pop(q);
+         Queue_append(m->queues[0], p);
+         }
+     }
+  }
+
  void mlqf_terminate(mlqf* m)
  {
    Queue* q;
