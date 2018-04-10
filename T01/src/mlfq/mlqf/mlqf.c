@@ -176,6 +176,12 @@ void mlqf_get_stats(mlqf* m, int t){
      }
      Queue_destroy(q);
    }
+   q = m->finished_processes;
+   for (size_t j = 0; j < q->count; j++) {
+     p = q->array[j];
+     process_destroy(p);
+   }
+   Queue_destroy(q);
    free(m->queues);
    free(m);
  }

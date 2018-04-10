@@ -90,6 +90,7 @@ int main(int argc, char* argv[])
     t--;
     mlqf_get_stats(scheduler, t);
     mlqf_terminate(scheduler);
+    Queue_destroy(processes);
   } else {
     return 1;
   }

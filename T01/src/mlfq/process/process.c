@@ -16,7 +16,8 @@ process* process_init(uint PID, char** name, uint burstAmount, uint* bursts, uin
   for (size_t i = 0; i < burstAmount; i++) {
     p->bursts[i] = bursts[i];
   }
-  p->burstLeft = bursts[0];
+  free(bursts);
+  p->burstLeft = p->bursts[0];
   p->cputimes = 0;
   p->readyTime = 0;
   p->turnarountime = 0;
