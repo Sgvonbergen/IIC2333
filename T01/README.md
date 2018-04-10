@@ -130,6 +130,6 @@ S: El tiempo antes de que se reinicien todos los procesos de vuelta a la primera
 
 
 ## Integrantes:
-=============
+
 - Sebasthian von Bergen
 - Francisco Paniagua
