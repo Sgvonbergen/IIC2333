@@ -114,9 +114,9 @@ La unica diferencia entre las versiones se presenta en el PROCESS0. Esto en part
 ## Uso:
 
 Existen varias versiones del programa con distintas variables.
-'''bash
+
 foo@bar:~$ ./scheduler [version] [file] [quantum] [Q] [S]
-'''
+
 version: v1 o v2 o v3
 
 file: Ruta al archivo que contiene los procesos a ser simulados
