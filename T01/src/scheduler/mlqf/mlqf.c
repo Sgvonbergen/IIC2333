@@ -54,35 +54,36 @@ int mlqf_tick(mlqf* m)
    mlqf_update_processes(m); //actualizamos los valores de espera de los procesos en cola
    process_tick(rp);  //actualizamos el tiempo del proceso en la cpu
 
+
+   int verify = mlqf_check_interupt(rp, m);
    int keep =  process_check(rp);
    // si keep es 0 significa que el burst esta terminado y no le quedan bursts
    if (keep == 0){
      rp->state = "FINISHED";
+     if (verify == 1){
+       rp->bloqueos ++;
+     }
      printf("proceso %s ha terminado todos sus bursts\n", rp->name);
      Queue_append(m->finished_processes, rp);
      m->running_process = NULL;
-     /*
-     if (m->running_process == NULL){
-       printf("el scheduller se ha quedado vacio\n");
-       return 0;
-     }
-    process_start(m->running_process);
-    */
+
    }
    // si keep es 1 significa que el  burst esta terminado y aun le quedan bursts
    if (keep == 1){
      rp->state = "READY";
+     if (verify == 1){
+       rp->bloqueos ++;
+       if (rp->corresponding_queue + 1 < m->Q){rp->corresponding_queue++;};
+     }
      Queue* previus_queue = m->queues[rp->corresponding_queue];
      Queue_append(previus_queue, rp);
      printf("proceso %s ha terminado uno de sus bursts\n", rp->name );
      m->running_process = NULL;
-     /*m->running_process = mlqf_get_next_process(m);
-     process_start(m->running_process);*/
    }
    // si keep es 2 significa que el burst todavia no a terminado
    if (keep == 2){
      time_runnig =  process_time_running(rp);
-     if (m->version == 3){ //para el caso de la version 2 seteo el quantum de la cola correspondiente
+     if (m->version == 3){ //para el caso de la version 3 seteo el quantum de la cola correspondiente
        Queue* q = m->queues[rp->corresponding_queue];
        m->quantum = q->q;
      }
@@ -96,9 +97,6 @@ int mlqf_tick(mlqf* m)
        Queue_append(next_queue, rp);
        printf("proceso %s ha terminado su quantum \n", rp->name);
        m->running_process = NULL;
-       /*m->running_process = mlqf_get_next_process(m);
-       process_start(m->running_process);*/
-
      }
    }
   return 1;
@@ -180,4 +178,17 @@ void mlqf_get_stats(mlqf* m, int t){
    }
    free(m->queues);
    free(m);
+ }
+
+
+ int mlqf_check_interupt(process* p, mlqf* m){
+   if (m->version == 3){ //para el caso de la version 3 seteo el quantum de la cola correspondiente
+     Queue* q = m->queues[p->corresponding_queue];
+     m->quantum = q->q;
+   }
+   printf("running: %d quantum: %d\n",p->time_running ,m->quantum );
+   if (p->time_running == m->quantum){
+     return 1;
+   }
+   return 0;
  }

@@ -29,3 +29,5 @@ process* mlqf_get_next_process(mlqf* m);
 void mlqf_resetqueues(mlqf* m);
 
 void mlqf_terminate(mlqf* m);
+
+int mlqf_check_interupt(process* p, mlqf* m);
