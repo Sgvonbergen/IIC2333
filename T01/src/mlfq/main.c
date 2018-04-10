@@ -72,14 +72,13 @@ int main(int argc, char* argv[])
     t = 1;
     int busy = 0;
     while(Queue_isempty(processes)==0 || busy ==1 ){
-      printf("%i\n", t);
+      printf("T: %i\n", t);
       process* p = Queue_get_process_by_start_time(processes, t);
       if (p != NULL){
         mlqf_add_process(scheduler, p);
       }
       busy = mlqf_tick(scheduler);
       if (version == 2 || version == 3) {
-        printf("%i, %i\n", t, s*s_counter);
         if (t == s*s_counter) {
           s_counter++;
           mlqf_resetqueues(scheduler);
