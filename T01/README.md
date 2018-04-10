@@ -115,7 +115,7 @@ La unica diferencia entre las versiones se presenta en el PROCESS0. Esto en part
 
 Existen varias versiones del programa con distintas variables.
 
-foo@bar:~$ ./scheduler [version] [file] [quantum] [Q] [S]
+foo@bar:~$ ./mlfq [version] [file] [quantum] [Q] [S]
 
 version: v1 o v2 o v3
 
