@@ -20,7 +20,9 @@ Cabe notar que para el caso de un q muy grande, el scheduler se comporta como Ro
 En particular para el caso del test.txt:
 
 PROCESS0 5 3 4 3 5
+
 PROCESS1 11 3 1 4 7
+
 PROCESS2 14 2 14 2
 
 
@@ -110,7 +112,6 @@ La unica diferencia entre las versiones se presenta en el PROCESS0. Esto en part
 
 
 ## Uso:
-=====
 
 Existen varias versiones del programa con distintas variables.
 '''bash
