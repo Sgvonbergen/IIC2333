@@ -21,6 +21,7 @@ struct process
   unsigned int corresponding_queue;
   unsigned int cputimes;
   unsigned int time_running;
+  unsigned int original_queue;
 };
 
 typedef struct process process;
