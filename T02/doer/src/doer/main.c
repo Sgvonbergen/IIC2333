@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include "Process/Process.h"
 
 int main(int argc, char const *argv[]) {
   if (argc != 3) {
@@ -17,27 +18,30 @@ int main(int argc, char const *argv[]) {
   int i, res;
   long int file_pos;
   char line[1024], *linePTR, cmd[32], *temp;
+  char **args;
+  args = malloc(sizeof(char*));
   FILE* fp = fopen(argv[1], "r");
   while (fgets(line, 512, fp)) {
-    line = linePTR;
-
+    linePTR = &line;
     // obtaining cmd
-    cmd = strsep(&linePTR, " ");
-
+    strcpy(cmd, strsep(&linePTR, " "));
     // Unpacking args
-    char *args[] = {cmd};
+    args[0] = cmd;
     i = 1;
     while (1) {
        temp = strsep(&linePTR, " ");
-       if (!temp) {
+       if (temp != NULL) {
+         args = realloc(args, (i+1)*sizeof(char*));
          args[i] = temp;
          i++;
        } else {
          break;
        }
     }
+    args = realloc(args, (i+1)*sizeof(char*));
     args[++i] = NULL;
-
+    Process* p = p_init(0, cmd, args);
+    /*
     // if process creation fails, tries again until it doesn't.
     int child;
     do {
@@ -63,7 +67,7 @@ int main(int argc, char const *argv[]) {
       fp = fopen(argv[1], "r");
       fseek(fp, file_pos, SEEK_SET);
     }
+  */
   }
-
   return 0;
 }
