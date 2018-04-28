@@ -22,6 +22,10 @@ lists* lists_init();
 
 void list_insert(list* l, int position, int elem);
 
+int list_delete(list* l, int position);
+
+list* list_copy(list* l); // crea un nuevo puntero a una lista igual a l
+
 void lists_insert(lists* l, int position, list* elem);
 
 void lists_add(lists* l1, lists* l2); // agrega todos los elementos de l2 a l1

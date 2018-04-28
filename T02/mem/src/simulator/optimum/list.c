@@ -35,6 +35,28 @@ void list_insert(list* l, int position, int element)
   l->count += 1;
 }
 
+int list_delete(list* l, int position)
+{
+  int element = l->data[position];
+  for (int i = position; i < l->count; i++) {
+    l->data[i] = l->data[i+1];
+  }
+  l->count -= 1;
+  return element;
+}
+
+list* list_copy(list* l){
+  list* new = list_init();
+  for (int i = 0; i < l->count ; i++){
+    if (new->count >= new->size) {
+      upgradeSize(new);
+    }
+    new->data[i] = l->data[i];
+    new->count += 1;
+  }
+  return new;
+}
+
 lists* lists_init(){
   lists* l = malloc(sizeof(lists));
   l -> count = 0;

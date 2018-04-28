@@ -5,10 +5,33 @@
 #include "optimum/list.h"
 #include "optimum/optimum.h"
 #include "memories/tlb.h"
+#include "memories/page_table.h"
 #include <math.h>
 
 int main(int argc, char const *argv[]) {
 
+
+  list* s = optimum(20, 3);
+  printf("--\n" );
+  for (int i=0; i< s->count; i++){
+    printf("%d\n", s->data[i]);
+  }
+
+  page_table* table = page_table_init(s);
+
+  page_table* t1 = table->sub_tables[0];
+  page_table* t2 = t1->sub_tables[127];
+  page_entry* p1 = t2->entries[63];
+  p1->validity = 1;
+  p1->frame_number = 100;
+  printf("zxc: %d\n", p1->validity);
+  printf("zxc: %d\n", p1->frame_number);
+
+  page_table_update(table, 8191, 200, 0);
+
+  page_entry* re = page_table_read(table, 8191);
+  printf("asd: %d\n", re->validity);
+  printf("asd: %d\n", re->frame_number);
 
 
   /*
@@ -19,6 +42,7 @@ int main(int argc, char const *argv[]) {
   }
   */
 
+  /*
   //ejemplo visto en clases (http://iic2333.ing.puc.cl/slides/4-mem.html#/7/8)
   //funciona perfectamente
   tlb* table = tlb_init();
@@ -53,5 +77,6 @@ int main(int argc, char const *argv[]) {
   tlb_insert(table, 2 , 300);
   tuple* tpl10= tlb_lookup(table, 1);
   printf("s: %d\n", tpl10->succes );
+  */
 
 }
