@@ -13,18 +13,16 @@ void tlb_entry_update(tlb_entry* entry, int page_number, int frame_number, int t
 
 tlb* tlb_init(){
     tlb* t = malloc(sizeof(tlb));
-    t->entries = malloc(sizeof(tlb_entry)*3);
-    for (int i = 0; i < 3; i++){
+    t->entries = malloc(sizeof(tlb_entry)*64);
+    for (int i = 0; i < 64; i++){
       t->entries[i].empty = 1;
     }
     t->time = 0;
     return t;
 }
 
-
-
 tuple* tlb_lookup(tlb* t, int adress){
-  for (int i = 0; i < 3; i++){
+  for (int i = 0; i < 64; i++){
     tlb_entry entry = t->entries[i];
     if (entry.empty == 0){
       if (entry.page_number == adress){

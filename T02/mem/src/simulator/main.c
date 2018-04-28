@@ -6,12 +6,29 @@
 #include "optimum/optimum.h"
 #include "memories/tlb.h"
 #include "memories/page_table.h"
+#include "memories/phy_memory.h"
 #include <math.h>
 
 int main(int argc, char const *argv[]) {
 
+  int* content = malloc(sizeof(int)*256);
+  for (int i = 0; i < 256; i++){
+    content[i] = i;
+  }
 
-  list* s = optimum(20, 3);
+  physical_memory* m = physical_memory_init();
+  for (int j = 0; j < 256; j++){
+    physical_memory_replaceframe(m, j, content);
+  }
+  int k = physical_memory_read(m, 0, 1);
+  printf("%d\n", k);
+  int p = physical_memory_findfree(m);
+  printf("%d\n", p);
+  int r = physical_memory_findreplace(m);
+  printf("%d\n", r);
+
+  /*
+  list* s = optimum(20, 5);
   printf("--\n" );
   for (int i=0; i< s->count; i++){
     printf("%d\n", s->data[i]);
@@ -32,7 +49,7 @@ int main(int argc, char const *argv[]) {
   page_entry* re = page_table_read(table, 8191);
   printf("asd: %d\n", re->validity);
   printf("asd: %d\n", re->frame_number);
-
+  */
 
   /*
   list* s = optimum(20, 5);
