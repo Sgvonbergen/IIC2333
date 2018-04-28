@@ -4,38 +4,54 @@
 #include <unistd.h>
 #include "optimum/list.h"
 #include "optimum/optimum.h"
+#include "memories/tlb.h"
 #include <math.h>
 
 int main(int argc, char const *argv[]) {
 
+
+
   /*
-  list* l1 = list_init();
-  list_insert(l1,0,1);
-  list_insert(l1,1,2);
-  list* l2 = list_init();
-  list_insert(l2,0,3);
-  list_insert(l2,1,4);
-  list* l3 = list_init();
-  list_insert(l3,0,5);
-  list_insert(l3,1,6);
-  printf("%d\n", l1->data[0]);
-  printf("%d\n", l1->data[1]);
-  lists* ls1 = lists_init();
-  lists* ls2 = lists_init();
-  lists_insert(ls1, 0, l1);
-  lists_insert(ls1, 1, l2);
-  lists_insert(ls2, 0, l3);
-  lists_add(ls1, ls2);
-
-
-  list* l11 = ls1->data[2];
-  printf("%d\n", l11->data[0]);
-  printf("%d\n", l11->data[1]);
-  */
   list* s = optimum(20, 5);
   printf("--\n" );
   for (int i=0; i< s->count; i++){
     printf("%d\n", s->data[i]);
   }
+  */
+
+  //ejemplo visto en clases (http://iic2333.ing.puc.cl/slides/4-mem.html#/7/8)
+  //funciona perfectamente
+  tlb* table = tlb_init();
+  printf("asd\n" );
+  tuple* tpl = tlb_lookup(table, 0);
+  printf("%d\n", tpl->succes );
+  tlb_insert(table, 0 , 100);
+  tuple* tpl1 = tlb_lookup(table, 1);
+  printf("%d\n", tpl1->succes );
+  tlb_insert(table, 1 , 200);
+  tuple* tpl2 = tlb_lookup(table, 2);
+  printf("%d\n", tpl2->succes );
+  tlb_insert(table, 2 , 300);
+  tuple* tpl3= tlb_lookup(table, 0);
+  printf("s: %d\n", tpl3->succes );
+  printf("d: %d\n", tpl3->entry.frame_number );
+  tuple* tpl4= tlb_lookup(table, 1);
+  printf("s: %d\n", tpl4->succes );
+  printf("d: %d\n", tpl4->entry.frame_number );
+  tuple* tpl5 = tlb_lookup(table, 3);
+  printf("%d\n", tpl5->succes );
+  tlb_insert(table, 3 , 400);
+  tuple* tpl6= tlb_lookup(table, 0);
+  printf("s: %d\n", tpl6->succes );
+  tuple* tpl7= tlb_lookup(table, 3);
+  printf("s: %d\n", tpl7->succes );
+  printf("d: %d\n", tpl7->entry.frame_number );
+  tuple* tpl8= tlb_lookup(table, 1);
+  printf("s: %d\n", tpl8->succes );
+  tuple* tpl9= tlb_lookup(table, 2);
+  printf("s: %d\n", tpl9->succes );
+  tlb_insert(table, 2 , 300);
+  tuple* tpl10= tlb_lookup(table, 1);
+  printf("s: %d\n", tpl10->succes );
 
 }
