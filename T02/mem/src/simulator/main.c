@@ -104,12 +104,13 @@ int main(int argc, char const *argv[]) {
     printf("PORCENTAJE_PAGE_FAULTS = %lf%% \n", 100*(page_faults/(page_faults+page_hits)));
     printf("PORCENTAJE_TLB_HITS = %lf%% \n", 100*(tlb_hits/(tlb_miss+tlb_hits)));
 
+    /*
     printf("TLB\n" );
     printf("i\t" );
     for (int i = 0; i < parameters_copy->count; i++){
       printf("n%d_number\t", i+1);
     }
-    /*
+    
     printf("frame_number\n");
     for (int k = 0; k < 64; k++){
       printf("%d\t",k);
@@ -120,7 +121,7 @@ int main(int argc, char const *argv[]) {
       printf("%d\n", tlb_table->entries[k].frame_number );
 
     }
-    */
+    *
   /*
   int* content = malloc(sizeof(int)*256);
   for (int i = 0; i < 256; i++){
