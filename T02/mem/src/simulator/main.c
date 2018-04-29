@@ -40,14 +40,24 @@ int main(int argc, char const *argv[]) {
     //unsigned int* asd = get_page(0);
     //printf("asd: %u\n", asd[1] );
     int levels = atoi(argv[1]);
-    //printf("levels; %d\n", levels);
+
 
     physical_memory* memory = physical_memory_init();
     list* parameters = optimum(20, levels);
+    list* parameters_copy = list_copy(parameters);
+    for (int j = 0; j < parameters->count; j++){
+      printf("BITS NIVEL %d: %d \n", j, parameters->data[j]);
+    }
+    printf("ESPACIO UTILIZADO: %lfB\n", score(parameters)*0.125);
     page_table* multilevel_table = page_table_init(parameters);
     tlb* tlb_table = tlb_init();
 
     list* adresses = get_addresses(argv[2]);
+
+    double tlb_hits = 0;
+    double tlb_miss = 0;
+    double page_hits = 0;
+    double page_faults = 0;
 
     for (int i = 0; i < adresses->count; i++){
       int logical_adress = adresses->data[i];
@@ -57,18 +67,21 @@ int main(int argc, char const *argv[]) {
       unsigned int content;
       tuple* tpl = tlb_lookup(tlb_table, page_number); //busco el frame en la tlb
       if (tpl->succes == 1){ //si el frame estaba en la tlb
-          printf("tlb hit\n");
+          tlb_hits += 1;
           content = physical_memory_read(memory, tpl->entry.frame_number, offset);
           printf("Direccion Fisica: %d\n", tpl->entry.frame_number*256 + offset);
       }
       else{ //si el frame no estaba en la tlb
+        tlb_miss += 1;
         page_entry* entry = page_table_read(multilevel_table, page_number); //busco el frame en la table multinivel
         if (entry->validity){ //si el frame esta en la tabla
+            page_hits += 1;
             tlb_insert(tlb_table, page_number, entry->frame_number);
             content = physical_memory_read(memory, entry->frame_number, offset);
             printf("Direccion Fisica: %d\n", entry->frame_number*256 + offset);
         }
         else { //ocurre un page fault
+            page_faults += 1;
             int free_frame_index = physical_memory_findfree(memory); //busco un espacio fisico para poner el nuevo frame
             if (free_frame_index == -1){ //caso en donde no queda espacio en la memoria fisica
               int free_frame_index = physical_memory_findreplace(memory);
@@ -88,9 +101,26 @@ int main(int argc, char const *argv[]) {
       }
       printf("contenido %u\n", content);
     }
+    printf("PORCENTAJE_PAGE_FAULTS = %lf%% \n", 100*(page_faults/(page_faults+page_hits)));
+    printf("PORCENTAJE_TLB_HITS = %lf%% \n", 100*(tlb_hits/(tlb_miss+tlb_hits)));
 
+    printf("TLB\n" );
+    printf("i\t" );
+    for (int i = 0; i < parameters_copy->count; i++){
+      printf("n%d_number\t", i+1);
+    }
+    /*
+    printf("frame_number\n");
+    for (int k = 0; k < 64; k++){
+      printf("%d\t",k);
+      int number = tlb_table->entries[k].page_number;
+      for (int p = 0; p < parameters_copy->count; p++){
+        printf("%d\t", number);
+      }
+      printf("%d\n", tlb_table->entries[k].frame_number );
 
-
+    }
+    */
   /*
   int* content = malloc(sizeof(int)*256);
   for (int i = 0; i < 256; i++){
