@@ -45,6 +45,15 @@ int list_delete(list* l, int position)
   return element;
 }
 
+void list_append(list* l, int elem){
+  if (l->count>=l->size) {
+    upgradeSize(l);
+  }
+  l->data[l->count] = elem;
+  l->count += 1;
+
+}
+
 list* list_copy(list* l){
   list* new = list_init();
   for (int i = 0; i < l->count ; i++){

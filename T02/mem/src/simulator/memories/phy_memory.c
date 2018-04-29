@@ -7,7 +7,7 @@
 frame* frame_init(){
     frame* f = malloc(sizeof(frame));
     f->empty = 1;
-    f->entries = malloc(sizeof(int)*256);
+    f->entries = malloc(sizeof(unsigned int)*256);
     return f;
 }
 
@@ -21,7 +21,7 @@ physical_memory* physical_memory_init(){
     return m;
 }
 
-int physical_memory_read(physical_memory* m, int frame_number, int offset){
+unsigned int physical_memory_read(physical_memory* m, int frame_number, int offset){
     frame* f = m->frames[frame_number];
     f->time_stamp = m->time;
     m->time += 1;
@@ -52,11 +52,12 @@ int physical_memory_findreplace(physical_memory* m){
       return index;
 }
 
-void physical_memory_replaceframe(physical_memory* m, int frame_number, int* new_entries){
+void physical_memory_replaceframe(physical_memory* m, int frame_number,unsigned int* new_entries, int page){
       frame* f = m->frames[frame_number];
       f->entries = new_entries;
       f->empty = 0;
       f->time_stamp = m->time;
+      f->map = page; //esto nos permite invalidar el mapeo cuando se remplace por un nuevo page
       m->time += 1;
       return;
 }
