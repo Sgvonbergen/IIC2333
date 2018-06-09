@@ -42,7 +42,7 @@ void Array_append(Array* list, Client element)
     upgradeSize(list);
   }
   list->array[list->count] = element;
-  list->count += 1;
+  list->count++;
 }
 
 /** Elimina el elemento de la posicion indicada y lo retorna */

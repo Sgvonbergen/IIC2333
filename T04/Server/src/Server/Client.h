@@ -4,7 +4,8 @@
 typedef struct client {
   int socket_id;
   struct sockaddr_in client_data;
-  char* nickname;
+  unsigned char* nickname;
+  int nickname_length;
   // if false, the data below must be reset for the next game
   int valid_data;
   // total amount of money
@@ -13,17 +14,29 @@ typedef struct client {
   int current_bet;
   // array of 5 cards.
   int* cards;
+  int* types;
 } Client;
 
 Client client_init(int socket_id, struct sockaddr_in client_data);
 
-//void ask_for_nickname(Client c);
+void receive_start_connection(Client c);
 
-// Resets all data on client for a new game
-//void start_game(Client c);
+void send_connection_established(Client c);
 
-//void ask_for_card_change(Client c);
+void ask_for_nickname(Client c);
 
-//void create_and_send_hand(Client c);
+void receive_nickname(Client c);
+
+void opponent_found(Client c1, Client c2);
+
+void send_initial_pot(Client c);
+
+void game_start(Client c);
+
+void send_inital_bet(Client c);
+
+void send_cards(Client c);
+
+void send_first(Client c, int is_first);
 
 void client_close(Client c);
