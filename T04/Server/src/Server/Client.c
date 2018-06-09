@@ -6,7 +6,7 @@
 #include <signal.h>
 #include <sys/socket.h>
 
-unsigned int rrand(int lower, int upper)
+unsigned int rangerand(int lower, int upper)
 {
   return (rand() % (upper - lower + 1)) + lower;
 }
@@ -236,8 +236,8 @@ void get_cards_to_change(Client c)
     }
 
     for (size_t i = 0; i < (int)header[1]/2; i++) {
-      c.cards[cards_to_change[i]] = rrand(1, 13);
-      c.types[cards_to_change[i]] = rrand(1, 4);
+      c.cards[cards_to_change[i]] = rangerand(1, 13);
+      c.types[cards_to_change[i]] = rangerand(1, 4);
     }
     free(cards_to_change);
     free(payload);
