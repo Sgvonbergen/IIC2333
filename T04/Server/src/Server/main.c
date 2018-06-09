@@ -9,6 +9,7 @@
 #include "Array.h"
 
 int MAX_WAITING_CONNECTIONS = 3;
+unsigned int min_bet = 0;
 Array* clients;
 
 void signal_handler(int sig){
@@ -16,6 +17,37 @@ void signal_handler(int sig){
     Array_destroy(clients);
     exit(0);
   }
+}
+
+int find_winner(Client c1, Client c2)
+{
+  return 0;
+}
+
+unsigned int rrand(int lower, int upper)
+{
+  return (rand() % (upper - lower + 1)) + lower;
+}
+
+void change_cards(Client c)
+{
+  ask_cards_to_change(c);
+  get_cards_to_change(c);
+  send_cards(c);
+}
+
+void bet(Client c)
+{
+  ask_bet(c, min_bet);
+  get_bet(c);
+  min_bet = c.current_bet;
+  while (c.current_bet > c.pot) {
+    wrong_bet(c);
+    ask_bet(c, min_bet);
+    get_bet(c);
+    min_bet = c.current_bet;
+  }
+  ok_bet(c);
 }
 
 int main(int argc, char* argv[])
@@ -69,33 +101,104 @@ int main(int argc, char* argv[])
   while ((new_client = accept(listener, (struct sockaddr *)&client_address, (socklen_t *)&addrlen)) != -1) {
     Client c = client_init(new_client, client_address);
     Array_append(clients, c);
-    // Client_ask_for_nickname(c);
+    receive_start_connection(c);
+    send_connection_established(c);
+    ask_for_nickname(c);
+    receive_nickname(c);
+    // Start match
+    if (clients->count == 2) {
+      break;
+    }
   }
 
+  Client c1 = Array_get(clients, 0);
+  Client c2 = Array_get(clients, 1);
 
+  opponent_found(c1, c2);
+  opponent_found(c2, c1);
+  send_initial_pot(c1);
+  send_initial_pot(c2);
+  game_start(c1);
+  game_start(c2);
 
-  // All new clients will be saved on the clients array.
-  //clients = Array_init();
+  Client * players = malloc(sizeof(Client) * 2);
+  while (c1.pot > 10 && c2.pot > 10)
+  {
+    // if first == 0, c1 is first. if first == 1, c2 is first.
+    unsigned int first = rrand(0, 1);
+    c1.cards = malloc(5*sizeof(unsigned int));
+    c2.cards = malloc(5*sizeof(unsigned int));
+    c1.types = malloc(5*sizeof(unsigned int));
+    c2.types = malloc(5*sizeof(unsigned int));
+    for (size_t i = 0; i < 5; i++) {
+      c1.cards[i] = rrand(1, 13);
+      c2.cards[i] = rrand(1, 13);
+      c1.types[i] = rrand(1, 4);
+      c2.types[i] = rrand(1, 4);
+    }
+    send_inital_bet(c1);
+    c1.current_bet = 10;
+    send_inital_bet(c2);
+    c2.current_bet = 10;
+    send_cards(c1);
+    send_cards(c2);
+    if (first) {
+      players[0] = c2;
+      players[1] = c1;
+    } else {
+      players[0] = c1;
+      players[1] = c2;
+    }
+    send_first(players[0], 2);
+    send_first(players[1], 1);
+    change_cards(players[0]);
+    change_cards(players[1]);
+    bet(players[0]);
+    bet(players[1]);
+    if (players[1].current_bet != -1 && players[0].current_bet < players[1].current_bet) {
+      bet(players[0]);
+    }
+    end_round(players[0]);
+    end_round(players[1]);
+    send_opponent_cards(players[0], players[1]);
+    send_opponent_cards(players[1], players[0]);
+    int winner = find_winner(players[0], players[1]);
+    if (winner) {
+      send_winner(players[1], 1);
+      send_winner(players[0], 2);
+      players[1].pot += players[0].current_bet;
+      players[0].pot -= players[0].current_bet;
+    } else {
+      send_winner(players[0], 1);
+      send_winner(players[1], 2);
+      players[0].pot += players[1].current_bet;
+      players[1].pot -= players[1].current_bet;
+    }
+    update_pot(players[0]);
+    update_pot(players[1]);
+  }
 
-  // TODO: create a handler thread that does matchmaking between clients.
-  // This thread should spawn 1 thread for every match that exists.
-  /*
-  // Accpting new clients, adding them to the available clients.
-  int c = sizeof(struct sockaddr_in);
-  struct sockaddr_in client;
-  int new_client;
-  do {
-    new_client = accept(listener, (struct sockaddr*)&client, (socklen_t*)&c);
-    // TODO: new_client should be a struct that holds relevant data for the matches aswell as socket identifier.
-    Array_append(clients, new_client);
-    TODO: on thread create execute the following communication. after that allow the match handler thread manage everything else.
-    1. Start Connection: Cliente envia este paquete al Servidor.
-    2. Connection Established: Servidor responde con este paquete luego de recibir el Start Connection del cliente.
-    3. Ask Nickname: Servidor env´ıa a cliente este paquete para preguntarle el nickname (nombre) del cliente que se
-    acaba de conectar.
-    4. Return Nickname: Cliente responde a servidor este paquete con el nickname del cliente
-    */
-  //} while(new_client >= 0);
+  send_game_end(c1);
+  send_game_end(c2);
 
+  FILE * winner = fopen("winner.jpg", "r");
+  FILE * loser = fopen("loser.jpg", "r");
+
+  if (c1.pot > c2.pot) {
+    send_winner(c1, 1);
+    send_winner(c2, 2);
+    send_image(c1, winner);
+    send_image(c2, loser);
+  } else {
+    send_winner(c1, 2);
+    send_winner(c2, 1);
+    send_image(c2, winner);
+    send_image(c1, loser);
+  }
+  fclose(winner);
+  fclose(loser);
+  Array_destroy(clients);
+  free(players);
+  printf("Thank you for playing. The server will close.\n");
   return 0;
 }
