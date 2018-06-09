@@ -76,7 +76,7 @@ Client Array_get(Array* list, unsigned int position)
 void Array_destroy(Array* list)
 {
   for (size_t i = 0; i < list->count; i++) {
-    // TODO: ADD close(client) and sending a message to the client so it closes aswell.
+    client_close(list->array[i]);
     free(&list->array[i]);
   }
   free(list->array);

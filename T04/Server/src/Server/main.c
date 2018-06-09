@@ -9,22 +9,46 @@
 #include "Array.h"
 
 int MAX_WAITING_CONNECTIONS = 3;
+unsigned int min_bet = 0;
 Array* clients;
 
 void signal_handler(int sig){
   if (sig == SIGINT){
-    game_end(Array_get(clients, 0));
-    game_end(Array_get(clients, 1));
     Array_destroy(clients);
     exit(0);
   }
 }
 
-int rrand(int lower, int upper)
+int find_winner(Client c1, Client c2)
+{
+  return 0;
+}
+
+unsigned int rrand(int lower, int upper)
 {
   return (rand() % (upper - lower + 1)) + lower;
 }
 
+void change_cards(Client c)
+{
+  ask_cards_to_change(c);
+  get_cards_to_change(c);
+  send_cards(c);
+}
+
+void bet(Client c)
+{
+  ask_bet(c, min_bet);
+  get_bet(c);
+  min_bet = c.current_bet;
+  while (c.current_bet > c.pot) {
+    wrong_bet(c);
+    ask_bet(c, min_bet);
+    get_bet(c);
+    min_bet = c.current_bet;
+  }
+  ok_bet(c);
+}
 
 int main(int argc, char* argv[])
 {
@@ -97,14 +121,15 @@ int main(int argc, char* argv[])
   game_start(c1);
   game_start(c2);
 
+  Client * players = malloc(sizeof(Client) * 2);
   while (c1.pot > 10 && c2.pot > 10)
   {
     // if first == 0, c1 is first. if first == 1, c2 is first.
-    int first = rrand(0, 1);
-    c1.cards = malloc(5*sizeof(int));
-    c2.cards = malloc(5*sizeof(int));
-    c1.types = malloc(5*sizeof(int));
-    c2.types = malloc(5*sizeof(int));
+    unsigned int first = rrand(0, 1);
+    c1.cards = malloc(5*sizeof(unsigned int));
+    c2.cards = malloc(5*sizeof(unsigned int));
+    c1.types = malloc(5*sizeof(unsigned int));
+    c2.types = malloc(5*sizeof(unsigned int));
     for (size_t i = 0; i < 5; i++) {
       c1.cards[i] = rrand(1, 13);
       c2.cards[i] = rrand(1, 13);
@@ -112,23 +137,68 @@ int main(int argc, char* argv[])
       c2.types[i] = rrand(1, 4);
     }
     send_inital_bet(c1);
+    c1.current_bet = 10;
     send_inital_bet(c2);
+    c2.current_bet = 10;
     send_cards(c1);
     send_cards(c2);
     if (first) {
-      send_first(c1, 2);
-      send_first(c2, 1);
+      players[0] = c2;
+      players[1] = c1;
     } else {
-      send_first(c1, 1);
-      send_first(c2, 2);
+      players[0] = c1;
+      players[1] = c2;
     }
+    send_first(players[0], 2);
+    send_first(players[1], 1);
+    change_cards(players[0]);
+    change_cards(players[1]);
+    bet(players[0]);
+    bet(players[1]);
+    if (players[1].current_bet != -1 && players[0].current_bet < players[1].current_bet) {
+      bet(players[0]);
+    }
+    end_round(players[0]);
+    end_round(players[1]);
+    send_opponent_cards(players[0], players[1]);
+    send_opponent_cards(players[1], players[0]);
+    int winner = find_winner(players[0], players[1]);
+    if (winner) {
+      send_winner(players[1], 1);
+      send_winner(players[0], 2);
+      players[1].pot += players[0].current_bet;
+      players[0].pot -= players[0].current_bet;
+    } else {
+      send_winner(players[0], 1);
+      send_winner(players[1], 2);
+      players[0].pot += players[1].current_bet;
+      players[1].pot -= players[1].current_bet;
+    }
+    update_pot(players[0]);
+    update_pot(players[1]);
   }
 
-  game_end(Array_get(clients, 0));
-  game_end(Array_get(clients, 1));
+  send_game_end(c1);
+  send_game_end(c2);
+
+  FILE * winner = fopen("winner.jpg", "r");
+  FILE * loser = fopen("loser.jpg", "r");
+
+  if (c1.pot > c2.pot) {
+    send_winner(c1, 1);
+    send_winner(c2, 2);
+    send_image(c1, winner);
+    send_image(c2, loser);
+  } else {
+    send_winner(c1, 2);
+    send_winner(c2, 1);
+    send_image(c2, winner);
+    send_image(c1, loser);
+  }
+  fclose(winner);
+  fclose(loser);
   Array_destroy(clients);
-  printf("Thank you for playing. Server will close.\n");
-
-
+  free(players);
+  printf("Thank you for playing. The server will close.\n");
   return 0;
 }
