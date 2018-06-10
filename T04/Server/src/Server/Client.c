@@ -86,12 +86,11 @@ void receive_nickname(Client c)
     recv(c.socket_id, header, 2, 0);
     i++;
   }
+
   int length = (int)header[1];
-  unsigned char * nickname = malloc(length);
-  recv(c.socket_id, nickname, length, 0);
-  c.nickname = nickname;
+  c.nickname = malloc(length);
+  recv(c.socket_id, &c.nickname, length, 0);
   c.nickname_length = length;
-  free(nickname);
   free(header);
 }
 
@@ -102,6 +101,7 @@ void opponent_found(Client c1, Client c2)
   header[1] = (char)c2.nickname_length;
   send(c1.socket_id, header, 2, 0);
   send(c1.socket_id, c2.nickname, c2.nickname_length, 0);
+  printf("%s %d\n", c2.nickname, c2.nickname_length);
   free(header);
 }
 
@@ -184,10 +184,10 @@ void send_first(Client c, unsigned int first)
 {
   unsigned char * header = malloc(2);
   header[0] = 11u;
-  header[0] = 1;
+  header[1] = 1;
   send(c.socket_id, header, 2, 0);
   unsigned char * payload = malloc(1);
-  payload[0] = (char)first;
+  payload[0] = (unsigned char)first;
   send(c.socket_id, payload, 1, 0);
   free(header);
   free(payload);

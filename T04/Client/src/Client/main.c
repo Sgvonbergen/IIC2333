@@ -205,7 +205,7 @@ int main(int argc, char* argv[])
       if(turn == 1){
         printf("You are the first to bet\n");
       }
-      else{
+      else {
         printf("You are the second to bet\n");
       }
     }

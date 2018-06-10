@@ -149,8 +149,8 @@ int main(int argc, char* argv[])
       players[0] = c1;
       players[1] = c2;
     }
-    send_first(players[0], 2);
-    send_first(players[1], 1);
+    send_first(players[0], 1);
+    send_first(players[1], 2);
     change_cards(players[0]);
     change_cards(players[1]);
     bet(players[0]);
