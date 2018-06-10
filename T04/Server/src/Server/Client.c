@@ -259,7 +259,7 @@ void ask_bet(Client c, unsigned min_bet)
   }
   unsigned char * header = malloc(2);
   header[0] = 14u;
-  header[1] = 0u;
+  header[1] = (char)(1+bets);
   send(c.socket_id, header, 2, 0);
   unsigned char * payload = malloc(1 + bets);
   payload[0] = 1;

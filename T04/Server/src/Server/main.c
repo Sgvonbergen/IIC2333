@@ -19,9 +19,236 @@ void signal_handler(int sig){
   }
 }
 
+int compare_function(const void *a,const void *b)
+{
+  int *x = (int *) a;
+  int *y = (int *) b;
+  return *x - *y;
+}
+
+int is_royal_flush(Client c)
+{
+  int type = c.types[0];
+  for (size_t i = 1; i < 5; i++) {
+    if (c.types[i] != type) {
+      return 0;
+    }
+  }
+  int* numbers = malloc(5);
+  memcpy(numbers, c.cards, 5);
+  qsort(numbers, 5, sizeof(int), compare_function);
+  if (numbers[0] != 10) {
+    return 0;
+  }
+  for (size_t i = 0; i < 4; i++) {
+    if (numbers[i+1] - numbers[i] != 1) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+int is_straight_flush(Client c, int* def)
+{
+  int type = c.types[0];
+  for (size_t i = 1; i < 5; i++) {
+    if (c.types[i] != type) {
+      return 0;
+    }
+  }
+  int* numbers = malloc(5);
+  memcpy(numbers, c.cards, 5);
+  qsort(numbers, 5, sizeof(int), compare_function);
+  for (size_t i = 0; i < 4; i++) {
+    if (numbers[i+1] - numbers[i] != 1) {
+      free(numbers);
+      return 0;
+    }
+  }
+  *def = numbers[0];
+  free(numbers);
+  return 1;
+}
+
+int is_four(Client c, int* def)
+{
+  int* numbers = malloc(sizeof(int) * 5);
+  memcpy(numbers, c.cards, 5);
+  qsort(numbers, 5, sizeof(int), compare_function);
+  if (numbers[0] == numbers[3] || numbers[1] == numbers[4]) {
+    *def = numbers[2];
+    free(numbers);
+    return 1;
+  }
+  return 0;
+}
+
+int is_full(Client c, int* def)
+{
+  int* numbers = malloc(sizeof(int) * 5);
+  memcpy(numbers, c.cards, 5);
+  qsort(numbers, 5, sizeof(int), compare_function);
+  if ((numbers[0] == numbers[1] && numbers[1] == numbers[2] && numbers[3] == numbers[4]) || (numbers[0] == numbers[1] && numbers[2] == numbers[3] && numbers[3] == numbers[4])) {
+    *def = numbers[0] + numbers[5];
+    free(numbers);
+    return 1;
+  }
+  return 0;
+}
+
+int is_flush(Client c)
+{
+  for (size_t i = 0; i < 4; i++) {
+    if (c.types[i] != c.types[i+1]) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+int is_straight(Client c, int* def)
+{
+  int* numbers = malloc(5);
+  memcpy(numbers, c.cards, 5);
+  qsort(numbers, 5, sizeof(int), compare_function);
+  for (size_t i = 0; i < 4; i++) {
+    if (numbers[i+1] - numbers[i] != 1) {
+      free(numbers);
+      return 0;
+    }
+  }
+  *def = numbers[0];
+  free(numbers);
+  return 1;
+}
+
+int is_trio(Client c, int *def)
+{
+  int* numbers = malloc(5);
+  memcpy(numbers, c.cards, 5);
+  qsort(numbers, 5, sizeof(int), compare_function);
+  *def = numbers[2];
+  if (numbers[2] == numbers[1] && numbers[2] == numbers[0]) {
+    free(numbers);
+    return 1;
+  } else if (numbers[2] == numbers[1] && numbers[2] == numbers[3]) {
+    free(numbers);
+    return 1;
+  } else if (numbers[2] == numbers[3] && numbers[2] == numbers[4]) {
+    free(numbers);
+    return 1;
+  }
+  return 0;
+}
+
+int is_two_pair(Client c, int *def)
+{
+  int p1;
+  for (size_t i = 0; i < 5; i++) {
+    for (size_t j = 0; j < 5; j++) {
+      if (i != j && c.cards[i] == c.cards[j]) {
+        p1 = c.cards[i];
+      }
+    }
+  }
+  for (size_t i = 0; i < 5; i++) {
+    for (size_t j = 0; j < 5; j++) {
+      if (i != j && c.cards[i] == c.cards[j] && c.cards[i] != p1) {
+        if (p1 > c.cards[i]) {
+          *def = p1;
+        } else {
+          *def = c.cards[i];
+        }
+        return 1;
+      }
+    }
+  }
+  return 0;
+}
+
+int is_pair(Client c, int * def)
+{
+  int max_pair = -1;
+  for (size_t i = 0; i < 5; i++) {
+    for (size_t j = 0; j < 5; j++) {
+      if (i != j && c.cards[i] == c.cards[j] && c.cards[i] > max_pair) {
+        max_pair = c.cards[i];
+      }
+    }
+  }
+  if (max_pair != -1) {
+    *def = max_pair;
+    return 1;
+  }
+  return 0;
+}
+
+int highest(Client c, int* def)
+{
+  int* numbers = malloc(5);
+  memcpy(numbers, c.cards, 5);
+  qsort(numbers, 5, sizeof(int), compare_function);
+  *def = numbers[4];
+  free(numbers);
+  return 1;
+}
+
 int find_winner(Client c1, Client c2)
 {
-  return 0;
+  int p1, p2, def1, def2;
+  if (is_royal_flush(c1)) {
+    p1 = 10;
+  } else if (is_straight_flush(c1, &def1)) {
+    p1 = 9;
+  } else if (is_four(c1, &def1)) {
+    p1 = 8;
+  } else if (is_full(c1, &def1)) {
+    p1 = 7;
+  } else if (is_flush(c1)) {
+    p1 = 6;
+  } else if (is_straight(c1, &def1)) {
+    p1 = 5;
+  } else if (is_trio(c1, &def1)) {
+    p1 = 4;
+  } else if (is_two_pair(c1, &def1)) {
+    p1 = 3;
+  } else if (is_pair(c1, &def1)) {
+    p1 = 2;
+  } else if (highest(c1, &def1)) {
+    p1 = 1;
+  } else {
+    p1 = 0;
+  }
+  if (is_royal_flush(c2)) {
+    p2 = 10;
+  } else if (is_straight_flush(c2, &def2)) {
+    p2 = 9;
+  } else if (is_four(c2, &def2)) {
+    p2 = 8;
+  } else if (is_full(c2, &def2)) {
+    p2 = 7;
+  } else if (is_flush(c2)) {
+    p2 = 6;
+  } else if (is_straight(c2, &def2)) {
+    p2 = 5;
+  } else if (is_trio(c2, &def2)) {
+    p2 = 4;
+  } else if (is_two_pair(c2, &def2)) {
+    p2 = 3;
+  } else if (is_pair(c2, &def2)) {
+    p2 = 2;
+  } else if (highest(c2, &def2)) {
+    p2 = 1;
+  } else {
+    p2 = 0;
+  }
+  if (p1 > p2 || (p1 == p2 && def1 >= def2)) {
+    return 0;
+  } else if (p2 > p1 || (p1 == p2 && def2 > def1)) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 unsigned int rrand(int lower, int upper)
